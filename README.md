@@ -5,4 +5,4 @@ Uses a custom figure rendering library to render 3d figures with GLUT, rocket co
 ## To-do
 Many of the functions of the rocket classes are not yet implemented, those will be added with time, this is just a first version
 Note: main.cpp is just an implementation, not a part of the library
-![DemoModel](./Images/demo1.png)
+![DemoModel](./Images/demo1.PNG)
