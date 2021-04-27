@@ -34,17 +34,37 @@ Now, let's say we want to get a rocket cylinder/body ready for rendering or mode
 ```cpp
 fullrocket myrocket;
 //Let's set some basic variables
-myrocket.rbody.height = 70 //in METERS, we are always going by the metric system
-myrocket.rbody.radius = 1.88f //again, meters
-myrocket.rbody.hullthickness = 0.0047 //hull thickness is used for more accurately calculating volume or density, but it also represent's hull thickness in meters
-myrocket.rbody.totalbodymass = 51000 //hull mass, NOT the total mass for the rocket, be VERY CAREFUL about this
-myrocket.rbody.accuratebodymass = 1420788 //THIS is the accurate total mass for the rocket, in kg
-myrocket.rbody.material = STAINLESSSTEEL //defined in metrics.hpp
-myrocket.rbody.rcylinder.xcoord = -35.0f * METER; //Just a sample coordinate, but it does implement the METER unit, which you should do too
-myrocket.rbody.rcylinder.ycoord = -20.0f * METER;
-myrocket.rbody.rcylinder.zcoord = -3.0f * METER;
+myrocket.rbody.height = 70; //in METERS, we are always going by the metric system
+myrocket.rbody.radius = 1.88f; //again, meters
+myrocket.rbody.hullthickness = 0.0047; //hull thickness is used for more accurately calculating volume or density, but it also represent's hull thickness in meters
+myrocket.rbody.totalbodymass = 6000000; //this is a virtual factor relating to the hull thickness, but is not actually a thickness, so DO NOT CONFUSE IT AS SUCH
+myrocket.rbody.accuratebodymass = 1420788; //THIS is the accurate total mass for the rocket, in kg
+myrocket.rbody.material = STAINLESSSTEEL; //defined in metrics.hpp
+myrocket.rbody.rcylinder.xcoord = -35.0f; * METER; //Just a sample coordinate, but it does implement the METER unit, which you should do too
+myrocket.rbody.rcylinder.ycoord = -20.0f; * METER;
+myrocket.rbody.rcylinder.zcoord = -3.0f; * METER;
 myrocket.rbody.rcylinder.vertexnum = 90; //Sharpness of the rocket body cylinder. Basically the more you have, the smoother it will render
 ```
-Now we have a fully minimal rocket body set for rendering.
+Now we have a fully minimal rocket body set for rendering. Note that you can experiment with calculating the height of the rocket by taking away that height and leaving the other parameters, and instead invoking ```myrocket.rbody.calcBodyHeight()``` to calculate the height. That way you can experiment with adding different materials, new widths, mass, all that. Moving on, let's look at rendering the rocket cylinder:
+```cpp
+fullrocket myrocket;
+myrocket.rbody.height = 70; 
+myrocket.rbody.radius = 1.88f; 
+myrocket.rbody.hullthickness = 0.0047; 
+myrocket.rbody.totalbodymass = 6000000;
+myrocket.rbody.accuratebodymass = 1420788;
+myrocket.rbody.material = STAINLESSSTEEL;
+myrocket.rbody.rcylinder.xcoord = -35.0f * METER;
+myrocket.rbody.rcylinder.ycoord = -20.0f * METER;
+myrocket.rbody.rcylinder.zcoord = -3.0f * METER;
+myrocket.rbody.rcylinder.vertexnum = 90;
+//Render the rocket here:
+GLenum renderprimtype = GL_TRIANGLE_STRIP; //GLUT primitive type for figure rendering
+GLenum payloadprimtype = GL_POLYGON;
+myrocket.rpayload.height = 12.0f; //Just a sample height for the rocket payload/tip
+myrocket.rbody.renderRocketCylinder(renderprimtype); //Render rocket cylinder/body with the primitive type and rocket class function
+myrocket.rbody.renderRocketTip(payloadprimtype, myrocket.rbody); //Give the payload the cylinder body and the primitive type to render the tip accordingly
+```
+Once you've done that, you should have gotten a basic rocket body and tip. Congrats, you rendered your first basic rocket!
 Docs will be finished later...
 ![DemoModel](./Images/demo1.PNG)
