@@ -10,7 +10,7 @@ GLfloat swidth = 700;
 GLfloat sheight = 700;
 
 //These default values can be changed
-float angle = 7.0;
+float angle = -5.0;
 float lx = 7.0f, ly = 0.0f, lz = 0.0f;
 float x = -30.0f, y = 12.0f, z = 5.0f;
 
@@ -45,10 +45,10 @@ void falconheavy(void) {
     static int r = 0;
     fullrocket falcon9;
     falcon9.rbody.height = 70;
-    falcon9.rbody.radius = 1.88f;
+    falcon9.rbody.radius = 1.83f;
     falcon9.rbody.hullthickness = 0.0047;
-    falcon9.rbody.totalbodymass = 72300 * (1 / falcon9.rbody.hullthickness);
     falcon9.rbody.accuratebodymass = 1420788;
+    falcon9.rbody.totalbodymass = 6000000;
     falcon9.rbody.material = STAINLESSSTEEL;
     falcon9.rbody.rcylinder.xcoord = -35.0f * METER;
     falcon9.rbody.rcylinder.ycoord = -20.0f * METER;
@@ -60,6 +60,7 @@ void falconheavy(void) {
     falcon9.rstaging.structuremass[0] = 51000;
     falcon9.rstaging.structuremass[1] = 4500;
     falcon9.rstaging.specificimpulse = 312;
+    falcon9.rbody.calcBodyHeight();
     falcon9.rstaging.calctotalmass(0);
     falcon9.rstaging.calctotalmass(1);
     falcon9.rbody.renderRocketCylinder(GL_TRIANGLE_STRIP);
@@ -71,14 +72,19 @@ void falconheavy(void) {
         rocketdeltaveval(&falcon9.rstaging, 0);
         falcon9.rstaging.specificimpulse = 348;
         rocketdeltaveval(&falcon9.rstaging, 1);
+        //falcon9.rfins.liftcomponentArea = 66.3834213179;
         std::cout << "HEIGHT: " << falcon9.rbody.height << std::endl;
         std::cout << "TOTAL MASS: " << falcon9.rstaging.totalmass[0] << "\n";
         std::cout << "EXHAUST VELOCITY: " << falcon9.rstaging.exhaustvelocity << std::endl;
+        std::cout << "SURFACE AREA: " << falcon9.calcSurfaceArea() << std::endl;
+        falcon9.rfins.atmosphericDensity = 0.00052;
+        falcon9.rfins.averagevelocity = 275;
+        falcon9.rfins.dragforce = sqrtf(934000);
+        std::cout << "DRAG COEFFICIENT: " << falcon9.rfins.calcdragcoefficient(1000) << std::endl;
         r++;
     }
-    cone nozzle(2.0f * METER, 3.0f * METER, falcon9.rbody.rcylinder.xcoord, falcon9.rbody.rcylinder.ycoord, falcon9.rbody.rcylinder.zcoord + falcon9.rbody.height * METER, 360);
-    nozzle.drawCone(100, 100, 100, GL_TRIANGLE_STRIP);
 }
+
 void saturn_V(void) {
     static int r = 0;
     fullrocket saturnV;
@@ -108,7 +114,7 @@ void saturn_V(void) {
     saturnV.rpayload.height = 15.0f;
     saturnV.rpayload.renderRocketTip(GL_POLYGON, saturnV.rbody);
     if (r == 0) {
-        std::cout << "SpaceX Falcon 9 Evaluation:\n";
+        std::cout << "NASA SATURN V Evaluation:\n";
         rocketdeltaveval(&saturnV.rstaging, 0);
         saturnV.rstaging.specificimpulse = 421;
         rocketdeltaveval(&saturnV.rstaging, 1);
@@ -120,6 +126,10 @@ void saturn_V(void) {
     }
     cone nozzle(4.0f * METER, 6.0f * METER, saturnV.rbody.rcylinder.xcoord, saturnV.rbody.rcylinder.ycoord, saturnV.rbody.rcylinder.zcoord+saturnV.rbody.height*METER, 360);
     nozzle.drawCone(100, 100, 100, GL_TRIANGLE_STRIP);
+}
+
+void internationspacestation(void) {
+
 }
 
 void renderScene(void) {

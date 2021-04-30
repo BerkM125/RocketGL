@@ -47,7 +47,7 @@ double stage::calcinitialmass(int stage) {
     if(totalmass[stage] == 0)
         calctotalmass(stage);
     initialmass = totalmass[stage];
-    std::cout << "STAGE " << stage+1 << " INITIAL MASS: " << initialmass << std::endl << std::endl;
+    //std::cout << "STAGE " << stage+1 << " INITIAL MASS: " << initialmass << std::endl << std::endl;
     return initialmass;
 }
 /* double calcfinalmass(int stage); in the staging class is specific to a stage number
@@ -62,7 +62,7 @@ double stage::calcfinalmass(int stage) {
         //sum += (i > stage) ? propellantmass[i] : 0;
     }
     finalmass = sum + payloadmass;
-    std::cout << "STAGE " << stage+1 << " FINAL MASS: " << finalmass << std::endl << std::endl;
+    //std::cout << "STAGE " << stage+1 << " FINAL MASS: " << finalmass << std::endl << std::endl;
     return finalmass;
 }
 /* double calcmassratio(int stage); in the staging class applies final mass and initial mass
@@ -72,7 +72,7 @@ double stage::calcmassratio(int stage) {
     double mrNumerator, mrDenominator;
     mrNumerator = calcinitialmass(stage);
     mrDenominator = calcfinalmass(stage);
-    std::cout << mrNumerator << " " << mrDenominator << std::endl;
+    //std::cout << mrNumerator << " " << mrDenominator << std::endl;
     massratio[stage] = mrNumerator/mrDenominator;
     return (massratio[stage]);
 }
@@ -86,7 +86,7 @@ double stage::calcdeltav(int stage) {
     exhaustvelocity = GRAVITY * specificimpulse;
     if(massratio[stage] == 0)
         calcmassratio(stage);
-    std::cout << "MASS RATIO, STAGE " << stage << " : " << massratio[stage] << std::endl;
+    //std::cout << "MASS RATIO, STAGE " << stage << " : " << massratio[stage] << std::endl;
     mrlog = log(massratio[stage]);
     deltav[stage] = exhaustvelocity * mrlog;
     return (deltav[stage]);
@@ -126,6 +126,9 @@ void stage::renderStaging(int stagingtype, rocket mrocket) {
                                             mrocket.rcylinder.vertexnum);
                     cone nozzle(2.0f * METER, 3.0f * METER, booster1.xcoord, booster1.ycoord, booster1.zcoord + heightpos*METER, 360);
                     nozzle.drawCone(100, 100, 100, GL_TRIANGLE_STRIP);
+                    //These values are only default and experimental
+                    boosterheight[n] = 1.0f;
+                    boosterradius[n] = mrocket.radius;
                     //Set vertex amount
                     booster1.vertexnum = 32;
                     boosterpayload1.vertexnum = 32;
@@ -173,23 +176,30 @@ stage::stage() {
     stagenum = 0;
     payloadmass = 0;
 }
+
 /* Aerodynamics class*/
 double aerodynamics::calcdragcoefficient(int altitude) {
+    double q;
     double atmosNumerator, atmosDenominator;
     if(atmosphericDensity == 0)
         atmosphericDensity = (altitude*AVERAGEDENSITYSLOPE)+1.2;
-    atmosDenominator = (liftcomponentArea*atmosphericDensity*(averagevelocity*averagevelocity));
-    atmosNumerator = (2 * dragforce);
+    std::cout << "Q: " << (averagevelocity * averagevelocity) / 2 * atmosphericDensity << std::endl;
+    q = (averagevelocity * averagevelocity) / 2 * atmosphericDensity;
+    atmosDenominator = (liftcomponentArea*q);
+    atmosNumerator = (dragforce);
     dragCoefficient = atmosNumerator / atmosDenominator;
     return dragCoefficient;
 }
 
 double aerodynamics::calcliftcoefficient(int altitude) {
+    double q;
     double atmosNumerator, atmosDenominator;
-    if(atmosphericDensity == 0)
-        atmosphericDensity = (altitude*AVERAGEDENSITYSLOPE)+1.2;
-    atmosDenominator = (liftcomponentArea*atmosphericDensity*(averagevelocity*averagevelocity));
-    atmosNumerator = (2 * liftforce);
+    if (atmosphericDensity == 0)
+        atmosphericDensity = (altitude * AVERAGEDENSITYSLOPE) + 1.2;
+    std::cout << "Q: " << (averagevelocity * averagevelocity) / 2 * atmosphericDensity << std::endl;
+    q = (averagevelocity * averagevelocity) / 2 * atmosphericDensity;
+    atmosDenominator = (liftcomponentArea * q);
+    atmosNumerator = (liftforce);
     liftCoefficient = atmosNumerator / atmosDenominator;
     return liftCoefficient;
 }
@@ -225,6 +235,39 @@ aerodynamics::aerodynamics() {
     liftcomponentArea = 0;
     atmosphericPressure = 0;
 }
+
+double fullrocket::calcBoosterMass(void) {
+    double total = 0;
+    double heightpos = 0;
+    double portionfactor = 0;
+    for (int n = 0; n < 8; n++) {
+        portionfactor = rstaging.totalmass[n] / rbody.accuratebodymass;
+        heightpos = rbody.height * portionfactor;
+        total += heightpos;
+    }
+    return total;
+}
+
+double fullrocket::calcSurfaceArea(void) {
+    double tmparea = 0.0f;
+    double circ = 0.0f;
+    double length = 0.0f;
+    double rbodyarea = 0.0f;
+    //payload/tip
+    circ = 2 * PI * rpayload.radius;
+    tmparea = 4 * PI * pow(rpayload.radius, 2);
+    rbodyarea += tmparea;
+    //boosters
+    for (int n = 1; n < 8; n++) {
+        if (rstaging.totalmass[n] != 0) {
+            circ = PI * rstaging.boosterradius[n];
+            rbodyarea += 2 * (sqrtf(pow(rstaging.boosterheight[n], 2) + pow(rstaging.boosterradius[n], 2))) * circ;
+        }
+    }
+    rfins.liftcomponentArea = rbodyarea;
+    return rbodyarea;
+}
+
 /* double calcmassratio(void); of the rocket class uses general initial and final mass info to
  * get a mass ratio in a very basic way. As you can see, the calcmassratio function is polymorphic
  * and is more specific in other parts of the rocket, i.e when it comes to staging.*/
@@ -342,6 +385,7 @@ rocket::rocket(double mtotal, double mdot, double dMprop, double i, double isp, 
 
 //This is a sample design for now, looks similar to the spacex payload encasing
 void tip::renderRocketTip(GLenum primtype, rocket body) {
+    radius = (body.rcylinder.radius) * 1.45;
     tipbody = cylinder(body.rcylinder.radius * 1.45, height * METER, body.rcylinder.xcoord, body.rcylinder.ycoord, body.rcylinder.zcoord, 60);
     sphere tipsphere1(tipbody.xcoord, -tipbody.ycoord, tipbody.zcoord, tipbody.radius, 60, 60);
     sphere tipsphere2(tipbody.xcoord, -tipbody.ycoord, tipbody.zcoord + (height * METER), tipbody.radius, 60, 60);
@@ -356,16 +400,4 @@ void tip::renderRocketTip(GLenum primtype, rocket body) {
     tipsphere2.sectors = 32;
     tipsphere1.rendersphere(200, 200, 200, GL_LINE_STRIP);
     tipsphere2.rendersphere(200, 200, 200, GL_LINE_STRIP);
-}
-
-double fullrocket::calcBoosterMass(void) {
-    double total = 0;
-    double heightpos = 0;
-    double portionfactor = 0;
-    for (int n = 0; n < 8; n++) {
-        portionfactor = rstaging.totalmass[n] / rbody.accuratebodymass;
-        heightpos = rbody.height * portionfactor;
-        total += heightpos;
-    }
-    return total;
 }

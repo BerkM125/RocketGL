@@ -56,3 +56,4 @@ public:
 };
 
 void RenderString(float x, float y, float z, void* font, const char* string);
+GLuint LoadTexture(const char* filename);

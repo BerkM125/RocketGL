@@ -50,6 +50,7 @@ public:
     rocket(double mtotal = 0, double mdot = 0, double dMprop = 0, double i = 0, double isp = 0, double fthrust = 0, double c = 0, double minitial = 0, double mfinal = 0, double mr = 0);
 
 };
+
 //ROCKET TIP SUB-CLASS: houses variables and functions involving rocket tip
 class tip : public rocket {
 public:
@@ -98,6 +99,8 @@ public:
     double deltav[8]{};
     double totaldeltav;
     double payloadmass;
+    double boosterheight[8];
+    double boosterradius[8];
     double calcdeltav (int stage);
     double calcmassratio (int stage);
     double calcinitialmass (int stage);
@@ -132,6 +135,7 @@ public:
     aerodynamics rfins;
     tip rpayload;
     double calcBoosterMass(void);
+    double calcSurfaceArea(void);
 };
 
 //ROCKET CALCULATION METHODS:
