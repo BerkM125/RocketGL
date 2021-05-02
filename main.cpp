@@ -67,20 +67,25 @@ void falconheavy(void) {
     falcon9.rstaging.renderStaging(STAGINGTYPEPARALLEL, falcon9.rbody);
     falcon9.rpayload.height = 15.0f;
     falcon9.rpayload.renderRocketTip(GL_POLYGON, falcon9.rbody);
+    falcon9.rfins.finheight = 25.0f;
+    falcon9.rfins.finwidth = 10.0f;
+    falcon9.rfins.finthickness = 0.2f;
+    falcon9.rfins.renderFins(true, falcon9);
     if (r == 0) {
         std::cout << "SpaceX Falcon 9 Evaluation:\n";
         rocketdeltaveval(&falcon9.rstaging, 0);
         falcon9.rstaging.specificimpulse = 348;
         rocketdeltaveval(&falcon9.rstaging, 1);
-        //falcon9.rfins.liftcomponentArea = 66.3834213179;
         std::cout << "HEIGHT: " << falcon9.rbody.height << std::endl;
         std::cout << "TOTAL MASS: " << falcon9.rstaging.totalmass[0] << "\n";
         std::cout << "EXHAUST VELOCITY: " << falcon9.rstaging.exhaustvelocity << std::endl;
         std::cout << "SURFACE AREA: " << falcon9.calcSurfaceArea() << std::endl;
         falcon9.rfins.atmosphericDensity = 0.00052;
         falcon9.rfins.averagevelocity = 275;
-        falcon9.rfins.dragforce = sqrtf(934000);
-        std::cout << "DRAG COEFFICIENT: " << falcon9.rfins.calcdragcoefficient(1000) << std::endl;
+        falcon9.rfins.dragCoefficient = 0.716;
+        falcon9.rfins.liftCoefficient = 0.85;
+        std::cout << "LIFT FORCE: " << falcon9.rfins.calcliftforce(1000) << std::endl;
+        std::cout << "DRAG FORCE: " << falcon9.rfins.calcdragforce(1000) << std::endl;
         r++;
     }
 }
@@ -113,6 +118,10 @@ void saturn_V(void) {
     saturnV.rstaging.renderStaging(STAGINGTYPESERIAL, saturnV.rbody);
     saturnV.rpayload.height = 15.0f;
     saturnV.rpayload.renderRocketTip(GL_POLYGON, saturnV.rbody);
+    saturnV.rfins.finheight = 25.0f;
+    saturnV.rfins.finwidth = 10.0f;
+    saturnV.rfins.finthickness = 1.0f;
+    saturnV.rfins.renderFins(false, saturnV);
     if (r == 0) {
         std::cout << "NASA SATURN V Evaluation:\n";
         rocketdeltaveval(&saturnV.rstaging, 0);
@@ -126,10 +135,6 @@ void saturn_V(void) {
     }
     cone nozzle(4.0f * METER, 6.0f * METER, saturnV.rbody.rcylinder.xcoord, saturnV.rbody.rcylinder.ycoord, saturnV.rbody.rcylinder.zcoord+saturnV.rbody.height*METER, 360);
     nozzle.drawCone(100, 100, 100, GL_TRIANGLE_STRIP);
-}
-
-void internationspacestation(void) {
-
 }
 
 void renderScene(void) {

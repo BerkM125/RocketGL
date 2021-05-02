@@ -17,8 +17,7 @@
 //Types of staging for rendering stages. Parallel staging will render boosters in parallel, serial will divide rocket up into different stages.
 #define STAGINGTYPEPARALLEL 1
 #define STAGINGTYPESERIAL 2
-
-
+class fullrocket;
 //PARENT ROCKET CLASS: houses main, bigger picture, whole-rocket variables and functions, as well as sub-classes of different rocket parts.
 class rocket {
 public:
@@ -112,6 +111,10 @@ public:
 //ROCKET LIFT COMPONENT SUB-CLASS: houses variables and functions involving aerodynamic forces on the rocket
 class aerodynamics : public rocket {
 public:
+    triprism twinfins[2];
+    double finheight;
+    double finwidth;
+    double finthickness;
     double liftcomponentArea;
     double dragCoefficient;
     double liftCoefficient;
@@ -123,8 +126,10 @@ public:
     double calcdragforce (int altitude);
     double calcdragcoefficient (int altitude);
     double calcliftcoefficient (int altitude);
+    void renderFins(bool hasBoosters, fullrocket mrocket);
     aerodynamics();
 };
+
 
 class fullrocket {
 public:
@@ -137,6 +142,7 @@ public:
     double calcBoosterMass(void);
     double calcSurfaceArea(void);
 };
+
 
 //ROCKET CALCULATION METHODS:
 extern double rocketdeltaveval (stage *rstage, int stage);

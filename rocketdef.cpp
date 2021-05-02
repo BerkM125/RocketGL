@@ -177,6 +177,41 @@ stage::stage() {
     payloadmass = 0;
 }
 
+double fullrocket::calcBoosterMass(void) {
+    double total = 0;
+    double heightpos = 0;
+    double portionfactor = 0;
+    for (int n = 0; n < 8; n++) {
+        portionfactor = rstaging.totalmass[n] / rbody.accuratebodymass;
+        heightpos = rbody.height * portionfactor;
+        total += heightpos;
+    }
+    return total;
+}
+
+double fullrocket::calcSurfaceArea(void) {
+    double tmparea = 0.0f;
+    double circ = 0.0f;
+    double length = 0.0f;
+    double rbodyarea = 0.0f;
+    //payload/tip
+    circ = 2 * PI * rpayload.radius;
+    tmparea = 4 * PI * pow(rpayload.radius, 2);
+    rbodyarea += tmparea;
+    //boosters
+    for (int n = 1; n < 8; n++) {
+        if (rstaging.totalmass[n] != 0) {
+            circ = PI * rstaging.boosterradius[n];
+            rbodyarea += 2 * (sqrtf(pow(rstaging.boosterheight[n], 2) + pow(rstaging.boosterradius[n], 2))) * circ;
+        }
+    }
+    //fins
+    std::cout << "FIN AREA: " << 2 * (sqrtf(pow(rfins.finheight, 2) + pow(rfins.finwidth, 2)) * rfins.finthickness) << std::endl;
+    rbodyarea += 2 * (sqrtf(pow(rfins.finheight, 2) + pow(rfins.finwidth, 2)) * rfins.finthickness);
+    rfins.liftcomponentArea = rbodyarea;
+    return rbodyarea;
+}
+
 /* Aerodynamics class*/
 double aerodynamics::calcdragcoefficient(int altitude) {
     double q;
@@ -227,6 +262,36 @@ double aerodynamics::calcliftforce(int altitude) {
     liftforce = atmosphericPressure * liftAreaProduct;
     return liftforce;
 }
+
+void aerodynamics::renderFins(bool hasBoosters, fullrocket mrocket) {
+    double boosterxincrement = 0;
+    double rightx, rightz, leftx, leftz;
+    if (hasBoosters) {
+        for (int n = 1; n < 8; n++)
+            if (mrocket.rstaging.totalmass[n] != 0)
+                boosterxincrement += mrocket.rbody.rcylinder.radius;
+    }
+    rightx = rightz = leftx = leftz = 0;
+    rightx = mrocket.rbody.rcylinder.xcoord - mrocket.rbody.rcylinder.radius - boosterxincrement;
+    leftx = mrocket.rbody.rcylinder.xcoord + mrocket.rbody.rcylinder.radius + boosterxincrement;
+    rightz = (mrocket.rbody.rcylinder.zcoord + mrocket.rbody.rcylinder.height);
+    leftz = (mrocket.rbody.rcylinder.zcoord + mrocket.rbody.rcylinder.height);
+    twinfins[0].xcoord = rightx;
+    twinfins[0].height = finthickness * METER;
+    twinfins[0].horizlength = -finwidth * METER;
+    twinfins[0].vertlength = -finheight * METER;
+    twinfins[0].ycoord = -mrocket.rbody.rcylinder.ycoord;
+    twinfins[0].zcoord = rightz;
+    twinfins[1].xcoord = leftx;
+    twinfins[1].height = finthickness * METER;
+    twinfins[1].horizlength = finwidth * METER;
+    twinfins[1].vertlength = -finheight * METER;
+    twinfins[1].ycoord = -mrocket.rbody.rcylinder.ycoord;
+    twinfins[1].zcoord = leftz;
+    twinfins[0].drawPrism(100, 100, 100, GL_TRIANGLE_STRIP);
+    twinfins[1].drawPrism(100, 100, 100, GL_TRIANGLE_STRIP);
+}
+
 /* Aerodynamic force constructor*/
 aerodynamics::aerodynamics() {
     atmosphericDensity = 0;
@@ -234,38 +299,6 @@ aerodynamics::aerodynamics() {
     liftCoefficient = 0;
     liftcomponentArea = 0;
     atmosphericPressure = 0;
-}
-
-double fullrocket::calcBoosterMass(void) {
-    double total = 0;
-    double heightpos = 0;
-    double portionfactor = 0;
-    for (int n = 0; n < 8; n++) {
-        portionfactor = rstaging.totalmass[n] / rbody.accuratebodymass;
-        heightpos = rbody.height * portionfactor;
-        total += heightpos;
-    }
-    return total;
-}
-
-double fullrocket::calcSurfaceArea(void) {
-    double tmparea = 0.0f;
-    double circ = 0.0f;
-    double length = 0.0f;
-    double rbodyarea = 0.0f;
-    //payload/tip
-    circ = 2 * PI * rpayload.radius;
-    tmparea = 4 * PI * pow(rpayload.radius, 2);
-    rbodyarea += tmparea;
-    //boosters
-    for (int n = 1; n < 8; n++) {
-        if (rstaging.totalmass[n] != 0) {
-            circ = PI * rstaging.boosterradius[n];
-            rbodyarea += 2 * (sqrtf(pow(rstaging.boosterheight[n], 2) + pow(rstaging.boosterradius[n], 2))) * circ;
-        }
-    }
-    rfins.liftcomponentArea = rbodyarea;
-    return rbodyarea;
 }
 
 /* double calcmassratio(void); of the rocket class uses general initial and final mass info to

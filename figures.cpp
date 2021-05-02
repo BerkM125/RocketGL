@@ -112,7 +112,7 @@ void cube::drawCube(GLubyte R, GLubyte G, GLubyte B, GLenum primtype) {
     GLfloat x = xcoord;
     GLfloat y = ycoord;
     GLfloat z = zcoord;
-    GLfloat colortint = 40;
+    GLfloat colortint = 0;
     glColor3ub(R - colortint, G - colortint, B - colortint);
     glBegin(primtype);
     glVertex3f(x, y, z);
@@ -145,7 +145,7 @@ void sphere::rendersphere(GLubyte R, GLubyte G, GLubyte B, GLenum primtype) {
     GLfloat stackstep = PI / stacks;
     GLfloat stackangle = 0.0;
     GLfloat sectorangle = 0.0;
-    GLfloat colortint = 40;
+    GLfloat colortint = 0;
     glColor3ub(R - colortint, G - colortint, B - colortint);
     glBegin(primtype);
     for (int i = 0; i <= stacks; ++i) {
@@ -169,6 +169,41 @@ sphere::sphere(GLfloat x, GLfloat y, GLfloat z, GLfloat r, GLint sec, GLint stk)
     radius = r;
     sectors = sec;
     stacks = stk;
+}
+
+void triprism::drawPrism(GLubyte R, GLubyte G, GLubyte B, GLenum primtype) {
+    GLfloat colortint = 40;
+    glBegin(primtype);
+    glColor3ub(R - colortint, G - colortint, B - colortint);
+    //Side faces
+    glVertex3f(xcoord, ycoord, zcoord);
+    glVertex3f(xcoord, ycoord-height, zcoord);
+    glVertex3f(xcoord, ycoord, zcoord+vertlength);
+    glVertex3f(xcoord, ycoord - height, zcoord+vertlength);
+    glVertex3f(xcoord+horizlength, ycoord, zcoord);
+    glVertex3f(xcoord+horizlength, ycoord - height, zcoord);
+    glVertex3f(xcoord, ycoord, zcoord);
+    glVertex3f(xcoord, ycoord - height, zcoord);
+    //Top and bottom faces
+    glColor3ub(R, G, B);
+    glVertex3f(xcoord+ horizlength, ycoord, zcoord);
+    glVertex3f(xcoord, ycoord, zcoord+ vertlength);
+    glVertex3f(xcoord, ycoord, zcoord);
+
+    glVertex3f(xcoord+ horizlength, ycoord-height, zcoord);
+    glVertex3f(xcoord, ycoord-height, zcoord+ vertlength);
+    glVertex3f(xcoord, ycoord-height, zcoord);
+    glEnd();
+
+}
+
+triprism::triprism(GLfloat hlength, GLfloat vlength, GLfloat hgt, GLfloat x, GLfloat y, GLfloat z) {
+    horizlength = hlength;
+    vertlength = vlength;
+    height = hgt;
+    xcoord = x;
+    ycoord = y;
+    zcoord = z;
 }
 
 GLuint LoadTexture(const char* filename) {

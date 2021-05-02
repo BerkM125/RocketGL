@@ -55,5 +55,17 @@ public:
 	sphere(GLfloat x = 0, GLfloat y = 0, GLfloat z = 0, GLfloat r = 0, GLint sec = 0, GLint stk = 0);
 };
 
+class triprism {
+public:
+	GLfloat height;
+	GLfloat horizlength;
+	GLfloat vertlength;
+	GLfloat xcoord;
+	GLfloat ycoord;
+	GLfloat zcoord;
+	void drawPrism(GLubyte R, GLubyte G, GLubyte B, GLenum primtype);
+	triprism(GLfloat hlength = 0, GLfloat vlength = 0, GLfloat hgt = 0, GLfloat x = 0, GLfloat y = 0, GLfloat z = 0);
+};
+
 void RenderString(float x, float y, float z, void* font, const char* string);
 GLuint LoadTexture(const char* filename);
