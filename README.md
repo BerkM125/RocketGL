@@ -67,5 +67,6 @@ myrocket.rbody.renderRocketCylinder(renderprimtype); //Render rocket cylinder/bo
 myrocket.rbody.renderRocketTip(payloadprimtype, myrocket.rbody); //Give the payload the cylinder body and the primitive type to render the tip accordingly
 ```
 Once you've done that, you should have gotten a basic rocket body and tip. Congrats, you rendered your first basic rocket!
+Thing is, you can only do so much with a simple rocket cylinder, let's look at some more things we can do with the rocket
 Docs will be finished later...
 ![DemoModel](./Images/demo1.PNG)
