@@ -67,6 +67,7 @@ myrocket.rbody.renderRocketCylinder(renderprimtype); //Render rocket cylinder/bo
 myrocket.rpayload.renderRocketTip(payloadprimtype, myrocket.rbody); //Give the payload the cylinder body and the primitive type to render the tip accordingly
 ```
 Once you've done that, you should have gotten a basic rocket body and tip. Congrats, you rendered your first basic rocket!
+![StagingDemoModelBeginning](./Images/firstdemo.PNG)
 Thing is, you can only do so much with a simple rocket cylinder, let's look at some more things we can do with the rocket:
 ##Staging
 RocketGL supports the rendering of two types of staging: serial and parallel. Think of parallel staging as rocket staging
