@@ -9,7 +9,6 @@
 GLfloat swidth = 700;
 GLfloat sheight = 700;
 
-//These default values can be changed
 float angle = -5.0;
 float lx = 7.0f, ly = 0.0f, lz = 0.0f;
 float x = -30.0f, y = 12.0f, z = 5.0f;
@@ -137,52 +136,17 @@ void saturn_V(void) {
     nozzle.drawCone(100, 100, 100, GL_TRIANGLE_STRIP);
 }
 
-void test(void) {
-    fullrocket myrocket;
-    myrocket.rbody.height = 70;
-    myrocket.rbody.radius = 1.83f;
-    myrocket.rbody.hullthickness = 0.0047;
-    myrocket.rbody.accuratebodymass = 1420788;
-    myrocket.rbody.totalbodymass = 6000000;
-    myrocket.rbody.material = STAINLESSSTEEL;
-    myrocket.rbody.rcylinder.xcoord = -35.0f * METER;
-    myrocket.rbody.rcylinder.ycoord = -20.0f * METER;
-    myrocket.rbody.rcylinder.zcoord = -3.0f * METER;
-    myrocket.rbody.rcylinder.vertexnum = 90;
-    GLenum renderprimtype = GL_TRIANGLE_STRIP; //GLUT primitive type for figure rendering
-    GLenum payloadprimtype = GL_POLYGON;
-    myrocket.rpayload.height = 12.0f; //Just a sample height for the rocket payload/tip
-    //NEW STUFF
-    myrocket.rstaging.payloadmass = 100; //Payload fairing mass, KG
-    myrocket.rstaging.propellantmass[0] = 1222800; //The propellant mass of the first stage, also kg
-    myrocket.rstaging.propellantmass[1] = 107200; //Propellant mass of the second stage
-    myrocket.rstaging.structuremass[0] = 51000; //Structural mass of the first stage
-    myrocket.rstaging.structuremass[1] = 4500; //Structural mass, second stage
-    myrocket.rstaging.specificimpulse = 312; //Specific impulse needed for delta-v calculation. Note that for now if any coming stage has a change in Isp, this variable must be changed.
-    myrocket.rstaging.calctotalmass(0); //only necessary if total mass for these stages haven't been manually specified, and you need to use the mass info to gather it
-    myrocket.rstaging.calctotalmass(1); //the calctotalmass function factors in stuff specifically for mass ratio calculation. If you want a change, go to rocketdef.cpp
-    myrocket.rbody.renderRocketCylinder(renderprimtype); //Render rocket cylinder/body with the primitive type and rocket class function
-    myrocket.rpayload.renderRocketTip(payloadprimtype, myrocket.rbody); //Give the payload the cylinder body and the primitive type to render the tip accordingly
-    myrocket.rstaging.renderStaging(STAGINGTYPEPARALLEL, myrocket.rbody);
-}
 void renderScene(void) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
     gluLookAt(x, y, z, x + lx, y + ly, z + lz, 0.0, 1.0f, 0.0);
-    // Draw ground if you want to
-    /*glColor3f(0.9f, 0.9f, 0.9f);
-    glBegin(GL_QUADS);
-    glVertex3f(-100.0f, 0.0f, -100.0f);
-    glVertex3f(-100.0f, 0.0f, 100.0f);
-    glVertex3f(100.0f, 0.0f, 100.0f);
-    glVertex3f(100.0f, 0.0f, -100.0f);
-    glEnd();*/
     gridlines(2);
-    test();
+    falconheavy();
+    saturn_V();
     glScalef(0.0525, 0.0525, 0.0525);
     glRotatef(-90, 0, 0.1, 0);
-    //RenderString(0, 400, 400, GLUT_STROKE_MONO_ROMAN, "SPACEX FALCON 9");
-    //RenderString(-1500, 0, 550, GLUT_STROKE_MONO_ROMAN, "NASA'S SATURN V");
+    RenderString(0, 400, 400, GLUT_STROKE_MONO_ROMAN, "SPACEX FALCON 9");
+    RenderString(-1500, 0, 550, GLUT_STROKE_MONO_ROMAN, "NASA'S SATURN V");
     glutSwapBuffers();
 }
 
