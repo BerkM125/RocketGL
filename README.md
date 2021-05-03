@@ -108,7 +108,9 @@ myrocket.rbody.renderRocketCylinder(renderprimtype); //If you already have this 
 myrocket.rpayload.renderRocketTip(payloadprimtype, myrocket.rbody); //If you already have this line don't write it again
 myrocket.rstaging.renderStaging(STAGINGTYPEPARALLEL, myrocket.rbody); //Give staging type and the rocket body for mapping the stage onto the rocket accordingly
 ```
+![StagingDemoModel1](./Images/stagingdemo1.PNG)
 Now with the ```STAGINGTYPEPARALLEL``` mode on, you should see a rocket with boosters on the side with accurate sizes and masses calculated using the data we gave just now. However, if you looked to do a serial staged rocket, all you would need to do is change the mode to ```STAGINGTYPESERIAL```. Try it out and you can see how a booster-controlled rocket would look and how a serial-staged rocket would look with the same exact parameters, and you might see why one choice is better than the other.
+![StagingDemoModel2](./Images/stagingdemo2.PNG)
 IMPORTANT NOTE: the serial staging vs the parallel staging is not completely accurate, since RocketGL currently doesn't take multi-thruster boosters and rockets into account yet when it comes to rendering the staging, therefore it renders a serial staged rocket and a parallel staged rocket assuming they both provide the same amount of thrust (IF you want to make this more realistic, you can try changing the specific impulse using knowledge about exhaust velocity and weight flow to conform to a booster-powered rocket vs one without boosters)
 
 
