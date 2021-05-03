@@ -7,7 +7,7 @@ This is still a VERY experimental phase, much of the functionality is not equipp
 Many of the functions of the rocket classes are not yet implemented, those will be added with time, this is just a first version
 Note: main.cpp is just an implementation, not a part of the library
 # A Basic Demo:
-
+Note: you must have your own OpenGL drawing loop implemented, this code should be inserted into that. OpenGL drawing functions will not be mentioned here.
 To start rendering and modeling a rocket, the first thing you need to do is initialize a ```fullrocket``` object:
 ```cpp
 fullrocket myrocket;
@@ -64,9 +64,54 @@ GLenum renderprimtype = GL_TRIANGLE_STRIP; //GLUT primitive type for figure rend
 GLenum payloadprimtype = GL_POLYGON;
 myrocket.rpayload.height = 12.0f; //Just a sample height for the rocket payload/tip
 myrocket.rbody.renderRocketCylinder(renderprimtype); //Render rocket cylinder/body with the primitive type and rocket class function
-myrocket.rbody.renderRocketTip(payloadprimtype, myrocket.rbody); //Give the payload the cylinder body and the primitive type to render the tip accordingly
+myrocket.rpayload.renderRocketTip(payloadprimtype, myrocket.rbody); //Give the payload the cylinder body and the primitive type to render the tip accordingly
 ```
 Once you've done that, you should have gotten a basic rocket body and tip. Congrats, you rendered your first basic rocket!
-Thing is, you can only do so much with a simple rocket cylinder, let's look at some more things we can do with the rocket
+Thing is, you can only do so much with a simple rocket cylinder, let's look at some more things we can do with the rocket:
+##Staging
+RocketGL supports the rendering of two types of staging: serial and parallel. Think of parallel staging as rocket staging
+involving boosters, and serial staging is just the opposite of that, consisting of one large whole rocket with sub-sections
+If you have a rocket with multiple stages, then you need to get all the required data about the rocket's masses in each stage
+before you try rendering the stages. Note that the staging in your code is represented by a 0-indexed array, so if you wanted
+to change the mass of the first stage, you would use the zeroeth stage and not the first one. We can start off with something like this:
+```cpp
+//FROM PREVIOUS CODE
+myrocket.rbody.height = 70;
+myrocket.rbody.radius = 1.83f;
+myrocket.rbody.hullthickness = 0.0047;
+myrocket.rbody.accuratebodymass = 1420788;
+myrocket.rbody.totalbodymass = 6000000;
+myrocket.rbody.material = STAINLESSSTEEL;
+myrocket.rbody.rcylinder.xcoord = -35.0f * METER;
+myrocket.rbody.rcylinder.ycoord = -20.0f * METER;
+myrocket.rbody.rcylinder.zcoord = -3.0f * METER;
+myrocket.rbody.rcylinder.vertexnum = 90;
+GLenum renderprimtype = GL_TRIANGLE_STRIP; //GLUT primitive type for figure rendering
+GLenum payloadprimtype = GL_POLYGON;
+myrocket.rpayload.height = 12.0f; //Just a sample height for the rocket payload/tip
+//NEW STUFF
+myrocket.rstaging.payloadmass = 100; //Payload fairing mass, KG
+myrocket.rstaging.propellantmass[0] = 1222800; //The propellant mass of the first stage, also kg
+myrocket.rstaging.propellantmass[1] = 107200; //Propellant mass of the second stage
+myrocket.rstaging.structuremass[0] = 51000; //Structural mass of the first stage
+myrocket.rstaging.structuremass[1] = 4500; //Structural mass, second stage
+myrocket.rstaging.specificimpulse = 312; //Specific impulse needed for delta-v calculation. Note that for now if any coming stage has a change in Isp, this variable must be changed.
+ ```
+ Using the info we have here, we can finish up the mass data requirements by calling some functions:
+ ```cpp
+myrocket.rstaging.calctotalmass(0); //only necessary if total mass for these stages haven't been manually specified, and you need to use the mass info to gather it
+myrocket.rstaging.calctotalmass(1); //the calctotalmass function factors in stuff specifically for mass ratio calculation. If you want a change, go to rocketdef.cpp
+```
+And now, we have all the data for a two-stage rocket done. If you want more stages, you need to do the same things we did for the propellant and structure masses above, just more times. To render our staging, we can do the following (after all the code we wrote above): 
+```cpp
+myrocket.rbody.renderRocketCylinder(renderprimtype); //If you already have this line don't write it again
+myrocket.rpayload.renderRocketTip(payloadprimtype, myrocket.rbody); //If you already have this line don't write it again
+myrocket.rstaging.renderStaging(STAGINGTYPEPARALLEL, myrocket.rbody); //Give staging type and the rocket body for mapping the stage onto the rocket accordingly
+```
+Now with the ```STAGINGTYPEPARALLEL``` mode on, you should see a rocket with boosters on the side with accurate sizes and masses calculated using the data we gave just now. However, if you looked to do a serial staged rocket, all you would need to do is change the mode to ```STAGINGTYPESERIAL```. Try it out and you can see how a booster-controlled rocket would look and how a serial-staged rocket would look with the same exact parameters, and you might see why one choice is better than the other.
+IMPORTANT NOTE: the serial staging vs the parallel staging is not completely accurate, since RocketGL currently doesn't take multi-thruster boosters and rockets into account yet when it comes to rendering the staging, therefore it renders a serial staged rocket and a parallel staged rocket assuming they both provide the same amount of thrust (IF you want to make this more realistic, you can try changing the specific impulse using knowledge about exhaust velocity and weight flow to conform to a booster-powered rocket vs one without boosters)
+
+
+
 Docs will be finished later...
 ![DemoModel](./Images/demo1.PNG)
