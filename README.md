@@ -144,4 +144,4 @@ And of course, you can render your rocket fins like so:
 myrocket.rfins.renderFins(true, myrocket); //Now the first argument asks if you use parallel staging, because fin configuration will change if that is the case. The second argument is simply the main fullrocket object that you are using.
 ```
 Docs will be finished later...
-![DemoModel](./Images/demo1.png)
+![DemoModel](./Images/demo1.PNG)
