@@ -143,5 +143,5 @@ And of course, you can render your rocket fins like so:
 ```cpp
 myrocket.rfins.renderFins(true, myrocket); //Now the first argument asks if you use parallel staging, because fin configuration will change if that is the case. The second argument is simply the main fullrocket object that you are using.
 ```
-Docs will be finished later...
+If we were to run the main.cpp file and render a basic, cylindrical model of the Saturn V and the Falcon Heavy rockets, here is what it would look like with the staging and aerodynamics and payload all put together:
 ![DemoModel](./Images/demo1.PNG)
