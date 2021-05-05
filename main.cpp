@@ -80,7 +80,7 @@ void falconheavy(void) {
         std::cout << "EXHAUST VELOCITY: " << falcon9.rstaging.exhaustvelocity << std::endl;
         std::cout << "SURFACE AREA: " << falcon9.calcSurfaceArea() << std::endl;
         falcon9.rfins.atmosphericDensity = 0.00052;
-        falcon9.rfins.averagevelocity = 275;
+        falcon9.rfins.averagevelocity = (falcon9.rstaging.calcdeltav(0)/2);
         falcon9.rfins.dragCoefficient = 0.716;
         falcon9.rfins.liftCoefficient = 0.85;
         std::cout << "LIFT FORCE: " << falcon9.rfins.calcliftforce(1000) << std::endl;
@@ -132,8 +132,6 @@ void saturn_V(void) {
         std::cout << "EXHAUST VELOCITY: " << saturnV.rstaging.exhaustvelocity << std::endl;
         r++;
     }
-    cone nozzle(4.0f * METER, 6.0f * METER, saturnV.rbody.rcylinder.xcoord, saturnV.rbody.rcylinder.ycoord, saturnV.rbody.rcylinder.zcoord+saturnV.rbody.height*METER, 360);
-    nozzle.drawCone(100, 100, 100, GL_TRIANGLE_STRIP);
 }
 
 void renderScene(void) {

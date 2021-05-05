@@ -124,7 +124,7 @@ void stage::renderStaging(int stagingtype, rocket mrocket) {
                     cone boosterpayload1(mrocket.radius * METER, 1.0f, (mrocket.rcylinder.xcoord + (mrocket.radius*1.5) * n), 
                                             (mrocket.rcylinder.ycoord), (mrocket.rcylinder.zcoord+(mrocket.height*METER))-((heightpos)*METER) - 1.0f,
                                             mrocket.rcylinder.vertexnum);
-                    cone nozzle(2.0f * METER, 3.0f * METER, booster1.xcoord, booster1.ycoord, booster1.zcoord + heightpos*METER, 360);
+                    cone nozzle(2.0f * METER, 3.0f * METER, booster1.xcoord, booster1.ycoord, (booster1.zcoord + heightpos*METER) - 1.0f * METER, 360);
                     nozzle.drawCone(100, 100, 100, GL_TRIANGLE_STRIP);
                     //These values are only default and experimental
                     boosterheight[n] = 1.0f;
@@ -146,7 +146,7 @@ void stage::renderStaging(int stagingtype, rocket mrocket) {
                     cone boosterpayload2(mrocket.radius * METER, 1.0f, (mrocket.rcylinder.xcoord - (mrocket.radius * 1.5) * n),
                         (mrocket.rcylinder.ycoord), (mrocket.rcylinder.zcoord+ (mrocket.height * METER))-((heightpos)*METER) - 1.0f,
                         mrocket.rcylinder.vertexnum);
-                    cone nozzle2(2.0f * METER, 3.0f * METER, booster2.xcoord, booster2.ycoord, booster2.zcoord + heightpos*METER, 360);
+                    cone nozzle2(2.0f * METER, 3.0f * METER, booster2.xcoord, booster2.ycoord, (booster2.zcoord + heightpos*METER) - 1.0f * METER, 360);
                     nozzle2.drawCone(100, 100, 100, GL_TRIANGLE_STRIP);
                     //Set vertex amount
                     booster2.vertexnum = 32;
@@ -179,6 +179,7 @@ stage::stage() {
 
 double fullrocket::calcBoosterMass(void) {
     double total = 0;
+
     double heightpos = 0;
     double portionfactor = 0;
     for (int n = 0; n < 8; n++) {
@@ -373,6 +374,8 @@ void rocket::renderRocketCylinder(GLenum primtype) {
     radius *= 1.03;
     rcylinder.vertexnum = 32;
     rcylinder.drawCylinder(200, 200, 200, GL_LINES);
+    cone nozzle(radius * METER, 3.0f * METER, rcylinder.xcoord, rcylinder.ycoord, (rcylinder.zcoord + height * METER) - (1.0f * METER), 360);
+    nozzle.drawCone(100, 100, 100, GL_TRIANGLE_STRIP);
 }
 
 void rocket::calcRocketMass(void) {
