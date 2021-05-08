@@ -209,6 +209,7 @@ double fullrocket::calcSurfaceArea(void) {
     //fins
     std::cout << "FIN AREA: " << 2 * (sqrtf(pow(rfins.finheight, 2) + pow(rfins.finwidth, 2)) * rfins.finthickness) << std::endl;
     rbodyarea += 2 * (sqrtf(pow(rfins.finheight, 2) + pow(rfins.finwidth, 2)) * rfins.finthickness);
+    rbodyarea += rfins.finwidth * rfins.finheight; //comment if flat fin surface area is not being taken into account
     rfins.liftcomponentArea = rbodyarea;
     return rbodyarea;
 }
@@ -378,11 +379,12 @@ void rocket::renderRocketCylinder(GLenum primtype) {
     nozzle.drawCone(100, 100, 100, GL_TRIANGLE_STRIP);
 }
 
-void rocket::calcRocketMass(void) {
+double rocket::calcRocketMass(void) {
     double rvolume = (PI * (radius * radius) * height);
     totalbodymass =  rvolume * material * hullthickness;
     //std::cout << radius << " " << height << " " << rvolume << " " << totalmass << std::endl;
     passMeasurements();
+    return totalbodymass;
 }
 
 /* void calcBodyHeight(void); is designed to get the height of the rocket's main body, but it does 

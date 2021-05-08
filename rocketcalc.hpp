@@ -43,7 +43,7 @@ public:
     double calcchangepropellant(int derivation);
     double calcimpulse (int derivation);
     void passMeasurements(void);
-    void calcRocketMass(void);
+    double calcRocketMass(void);
     void renderRocketCylinder(GLenum primtype);
     void calcBodyHeight(void);
     rocket(double mtotal = 0, double mdot = 0, double dMprop = 0, double i = 0, double isp = 0, double fthrust = 0, double c = 0, double minitial = 0, double mfinal = 0, double mr = 0);
